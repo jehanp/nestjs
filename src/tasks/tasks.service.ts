@@ -36,15 +36,15 @@ export class TasksService {
     //     return tasks;
     // }
 
-    // async getTaskById(id:number):Promise<Task>{
-    //     const found = await this.taskRepository.findOne(id);
+    async getTaskById(id:number):Promise<Task>{
+        const found = await this.taskRepository.findOne(id);
 
-    //     if(!found){
-    //         throw new NotFoundException(`Task with ID "${id}" not found.`);
-    //     }
+        if(!found){
+            throw new NotFoundException(`Task with ID "${id}" not found.`);
+        }
 
-    //     return found;
-    // }
+        return found;
+    }
 
     // createTask(createTaskDto: CreateTaskDto): Task{
     //     const {title, description} = createTaskDto;
