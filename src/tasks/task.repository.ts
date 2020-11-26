@@ -47,8 +47,6 @@ export class TaskRepository extends Repository<Task>{
         } catch (error) {
             this.logger.error(`Failed to create task for user :${user.username}", Data: ${JSON.stringify({createTaskDto})}`, error.stack);
             throw new InternalServerErrorException();
-        }
-
-        
+        }        
     }
 } 
