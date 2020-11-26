@@ -2,6 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { TaskStatus } from './task-status.enum';
+import { Task } from './task.entity';
 import { TaskRepository } from './task.repository';
 import { TasksService } from './tasks.service';
 
@@ -96,10 +97,25 @@ describe('TasksService', ()=>{
             expect(taskRepository.delete).toHaveBeenCalledWith({id: 1, userId: mockUser.id})
         });
 
-        it('throws an error as task is not found', async ()=> {
+        it('throws an error as task is not found', ()=> {
             taskRepository.delete.mockResolvedValue({affedted: 0});
-            await tasksService.deleteTask(mockUser, 1)
-            expect(taskRepository.delete).rejects.toThrow(NotFoundException)
+            expect(tasksService.deleteTask(mockUser, 1)).rejects.toThrow(NotFoundException)
+        });
+    });
+
+    describe('updateTaskStatus', ()=>{
+        it('updates a task status', async ()=>{
+            const save = jest.fn().mockResolvedValue(true);
+            tasksService.getTaskById = jest.fn().mockResolvedValue({
+                status: TaskStatus.OPEN,
+                save
+            });
+
+            expect(tasksService.getTaskById).not.toHaveBeenCalled()
+            const result = await tasksService.updateTaskStatus(mockUser, 1, TaskStatus.IN_PROGRESS);
+            expect(tasksService.getTaskById).toHaveBeenCalledWith(mockUser, 1);
+            expect(save).toHaveBeenCalled();
+            expect(result.status).toEqual(TaskStatus.IN_PROGRESS);
         });
     });
 })
